@@ -1,0 +1,44 @@
+﻿@model SuVanCop.Models.ViewModels.PublicScreenViewModel
+
+<h2>Turnos</h2>
+<div id="turns">
+    @foreach (var turn in Model.CurrentTurns)
+    {
+        <div>
+            Turno: @turn.Type @turn.Number - Taquilla: 1
+        </div>
+
+    }
+</div>
+
+<h2>Cita actual</h2>
+@if (Model.CurrentAppointment != null)
+{
+    <div>
+        Paciente: @Model.CurrentAppointment.User?.FullName <br />
+        Doctor: @Model.CurrentAppointment.Doctor?.FullName <br />
+        Consultorio: 1
+    </div>
+}
+else
+{
+    <div></div>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/turnHub")
+            .build();
+
+        connection.on("UpdateTurn", function (number, type, desk) {
+            $("#turns").append(`<div>Turn: ${type} ${number} - Desk: ${desk}</div>`);
+        });
+
+        connection.start().then(function () {
+            console.log("Connected to SignalR");
+        });
+    </script>
+}

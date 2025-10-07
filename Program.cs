@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using SuVanCop.Data;
+using SuVanCop.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<PostgresDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -27,5 +30,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHub<TurnHub>("/turnHub");
 
 app.Run();
