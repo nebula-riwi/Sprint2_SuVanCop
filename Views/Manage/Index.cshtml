@@ -1,0 +1,119 @@
+﻿@model SuVanCop.Models.ViewModels.ManageViewModel
+
+@{
+    ViewData["Title"] = "Panel de Administración";
+    Layout = "_ManageLayout";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center">Panel de Administración</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Gestión de Usuarios
+                </div>
+                <div class="card-body">
+                    <p>Administra los usuarios del sistema.</p>
+                    <a href="@Url.Action("ManageUsers", "Admin")" class="btn btn-primary btn-block">Ir a Usuarios</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Gestión de Citas
+                </div>
+                <div class="card-body">
+                    <p>Administra las citas programadas.</p>
+                    <a href="@Url.Action("ManageAppointments", "Admin")" class="btn btn-primary btn-block">Ir a Citas</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Gestión de Médicos
+                </div>
+                <div class="card-body">
+                    <p>Administra los médicos y sus horarios.</p>
+                    <a href="@Url.Action("ManageDoctors", "Admin")" class="btn btn-primary btn-block">Ir a Médicos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <h3>Gestión de Turnos</h3>
+
+        @if (Model.CurrentTurn != null)
+        {
+            <div class="alert alert-info mt-3">
+                Turno actual: <strong>@Model.CurrentTurn.Type @Model.CurrentTurn.Number</strong>
+            </div>
+
+            <button id="changeTurnButton" class="btn btn-danger" data-turn-id="@Model.CurrentTurn.Id">
+                Siguiente Turno
+            </button>
+        }
+        else
+        {
+            <div class="alert alert-warning mt-3">
+                No hay un turno activo actualmente.
+            </div>
+        }
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/turnHub")
+        .build();
+
+    connection.start()
+        .then(() => console.log("Conectado a SignalR (Manage)"))
+        .catch(err => console.error(err.toString()));
+
+    connection.on("UpdateTurn", function (id, number, type) {
+        console.log("📡 Nuevo turno recibido:", id, type, number);
+
+        if (id > 0) {
+            $(".alert").removeClass("alert-warning").addClass("alert-info")
+                .html(`Turno actual: <strong>${type} ${number}</strong>`);
+
+            $("#changeTurnButton").data("turn-id", id);
+            $("#changeTurnButton").show();
+        } else {
+            $(".alert").removeClass("alert-info").addClass("alert-warning")
+                .text("No hay más turnos disponibles.");
+            $("#changeTurnButton").hide();
+        }
+    });
+
+    $("#changeTurnButton").click(function () {
+        var currentTurnId = $(this).data("turn-id");
+
+        if (currentTurnId) {
+            $.ajax({
+                url: '@Url.Action("ChangeTurn", "Manage")',
+                type: 'POST',
+                data: { currentTurnId: currentTurnId },
+                success: function () {
+                    console.log("Turno cambiado correctamente.");
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al cambiar el turno:", status, error);
+                    console.log("Detalles:", xhr.responseText);
+                }
+            });
+        }
+    });
+</script>
+

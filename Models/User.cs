@@ -11,5 +11,7 @@
         public string Rh { get; set; }
         public string PictureUrl { get; set; }
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        
+        public string FullName => $"{Names} {LastNames}";
        
     }
