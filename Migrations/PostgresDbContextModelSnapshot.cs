@@ -30,14 +30,14 @@ namespace SuVanCop.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("DoctorId")
                         .HasColumnType("integer");
 
-                    b.Property<TimeSpan>("Hour")
-                        .HasColumnType("interval");
+                    b.Property<DateTime>("Hour")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -128,6 +128,14 @@ namespace SuVanCop.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Nuip")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Rh")
                         .IsRequired()
                         .HasColumnType("text");
 

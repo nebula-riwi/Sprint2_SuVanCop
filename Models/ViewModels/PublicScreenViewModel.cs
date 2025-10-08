@@ -2,6 +2,7 @@
 
 public class PublicScreenViewModel
 {
-    public List<Turn> CurrentTurns { get; set; }
+    public Turn? CurrentTurn { get; set; }
     public Appointment? CurrentAppointment { get; set; }
 }
+

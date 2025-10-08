@@ -16,27 +16,30 @@ public class PublicScreenController : Controller
 
     public IActionResult Index()
     {
-        var now = DateTime.Now;
+        var now = DateTime.UtcNow;
 
-        var activeTurns = _context.turns
-            .Where(t => t.Status == "attending")
+        var activeTurn = _context.turns
+            .Where(t => t.Status == "active")
             .OrderBy(t => t.CreationDate)
-            .ToList();
+            .FirstOrDefault();
+
 
         var currentAppointment = _context.appointments
             .Include(a => a.Doctor)
             .Include(a => a.User)
             .FirstOrDefault(a =>
-                a.Date == DateOnly.FromDateTime(now) &&
-                a.Hour.Hours == now.Hour
+                a.Date == now.Date &&
+                a.Hour.Hour == now.Hour
             );
 
         var viewModel = new PublicScreenViewModel()
         {
-            CurrentTurns = activeTurns,
+            CurrentTurn = activeTurn,
             CurrentAppointment = currentAppointment
         };
 
         return View(viewModel);
     }
+
 }
+
