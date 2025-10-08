@@ -3,8 +3,8 @@
 public class Appointment
 {
     public int Id { get; set; }
-    public DateOnly Date { get; set; }
-    public TimeSpan Hour { get; set; }
+    public DateTime Date { get; set; }
+    public DateTime Hour { get; set; }
     public string Status {get; set;}
     public int? UserId  { get; set; }
     public User? User { get; set; }

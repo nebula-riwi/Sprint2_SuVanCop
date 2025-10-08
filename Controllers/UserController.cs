@@ -180,9 +180,9 @@ public class UserController : Controller
             }
 
             _context.users.Add(user);
-            _context.SaveChanges(); // 👈 Sincrónico
+            _context.SaveChanges();
 
-            ImprimirTicketCarnet(user); // 👈 Llamada directa
+            ImprimirTicketCarnet(user); 
 
             TempData["message"] = "Usuario creado exitosamente!";
             return RedirectToAction(nameof(Index));
