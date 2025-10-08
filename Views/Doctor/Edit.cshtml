@@ -1,0 +1,49 @@
+﻿@model SuVanCop.Models.Doctor
+
+@{
+    ViewData["Title"] = "Editar Doctor";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card mt-4">
+            <div class="card-body">
+                <h3 class="mb-3">Editar Usuario</h3>
+
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Names" class="form-label"></label>
+                        <input asp-for="Names" class="form-control" />
+                        <span asp-validation-for="Names" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="LastNames" class="form-label"></label>
+                        <input asp-for="LastNames" class="form-control" />
+                        <span asp-validation-for="LastNames" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Nuip" class="form-label"></label>
+                        <input asp-for="Nuip" class="form-control" />
+                        <span asp-validation-for="Nuip" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Especialidad</label>
+                        <select name="Speciality" id="" class="form-control">
+                            <option value="General">Medicina General</option>
+                            <option value="Cardiologia">Cardiologia</option>
+                            <option value="Dermatologia">Dermatologia</option>
+                        </select>
+                    </div> 
+
+                    <button type="submit" class="btn btn-primary w-100">Guardar cambios</button>
+                    <a asp-action="Index" class="btn btn-secondary w-100 mt-2">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

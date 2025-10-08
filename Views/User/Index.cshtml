@@ -1,0 +1,172 @@
+﻿@model IEnumerable<SuVanCop.Models.User>
+
+<div class="row g-4">
+    <!-- Formulario -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-primary text-white fw-bold text-center">
+                Nuevo Usuario
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nombres</label>
+                        <input type="text" name="Names" class="form-control" placeholder="Ingrese nombres">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Apellidos</label>
+                        <input type="text" name="LastNames" class="form-control" placeholder="Ingrese apellidos">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Numero de documento</label>
+                        <input type="number" name="Nuip" class="form-control" placeholder="Ingrese Numero de documento">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tipo de sangre (Rh)</label>
+                        <select name="Rh" class="form-select">
+                            <option value="" disabled selected>Seleccione el tipo de sangre</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Foto del usuario (tomada en vivo)</label><br />
+                        <video id="video" width="100%" autoplay playsinline class="rounded border"></video><br />
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="capturarFoto()">
+                            <i class="bi bi-camera"></i> Tomar foto
+                        </button>
+                        <canvas id="canvas" width="300" height="225" style="display:none;"></canvas>
+                        <img id="preview" src="#" alt="Previsualización" class="img-thumbnail mt-2" style="max-width:100%;" />
+                    </div>
+
+                    <input type="hidden" name="PictureUrl" id="PictureUrl" />
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-save me-2"></i> Guardar Informacion
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-secondary text-white fw-bold">
+                Lista de Usuarios
+            </div>
+            <div class="card-body">
+                @if (TempData["message"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["message"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Nuip</th>
+                            <th>RH</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.Id</td>
+                                <td>@user.Names</td>
+                                <td>@user.LastNames</td>
+                                <td>@user.Nuip</td>
+                                <td>@user.Rh</td>
+                                
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-controller="User" asp-action="Details" asp-route-id="@user.Id"
+                                           class="btn btn-sm btn-info">
+                                            <i class="bi bi-eye"></i> Detalles
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@user.Id" asp-controller="User"
+                                           class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                        <a asp-action="Destroy" asp-route-id="@user.Id" asp-controller="User"
+                                           class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let buffer = "";
+
+    document.addEventListener('keydown', function (e) {
+        
+        if (e.key.length === 1) {
+            buffer += e.key;
+        }
+
+        
+        if (e.key === 'Enter') {
+            const nuip = buffer.trim();
+            buffer = ""; 
+
+            if (nuip.length > 5) {
+                window.location.href = `/User/DetailsByNuip?nuip=${nuip}`;
+            } else {
+                console.warn("NUIP inválido:", nuip);
+            }
+        }
+    });
+</script>
+
+
+
+@section Scripts {
+    <script>
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        document.getElementById('video').srcObject = stream;
+    })
+    .catch(err => {
+        alert("No se pudo acceder a la cámara: " + err);
+    });
+
+function capturarFoto() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/png');
+    document.getElementById('PictureUrl').value = dataUrl;
+    document.getElementById('preview').src = dataUrl;
+}
+</script>
+}
+
