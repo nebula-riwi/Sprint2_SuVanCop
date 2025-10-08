@@ -1,0 +1,154 @@
+﻿@model IEnumerable<SuVanCop.Models.Appointment>
+
+<div class="row g-4">
+    <!-- Formulario -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-primary text-white fw-bold text-center">
+                Nueva Cita
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Fecha</label>
+                        <input type="date" name="Date" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Hora</label>
+                        <input type="time" name="Hour" class="form-control" required>
+                    </div>
+
+                    <input type="hidden" name="Status" value="Pendiente">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Número de documento (NUIP)</label>
+                        <input type="number" id="NuipInput" class="form-control" placeholder="Ingrese número de documento" required>
+                        <input type="hidden" name="UserId" id="UserId" />
+                        <small id="userInfo" class="text-muted"></small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Doctor</label>
+                        <select name="DoctorId" class="form-control" required>
+                            <option value="">Seleccione un doctor</option>
+                            @foreach (var doctor in ViewBag.Doctors)
+                            {
+                                <option value="@doctor.Id">@doctor.Names @doctor.LastNames</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-save me-2"></i> Guardar Información
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-secondary text-white fw-bold">
+                Lista de Citas
+            </div>
+            <div class="card-body">
+                @if (TempData["message"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["message"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Usuario</th>
+                                <th>Doctor</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var appointment in Model)
+                                {
+                                    <tr>
+                                        <td>@appointment.Date.ToString("MM/dd/yyyy")</td>
+                                        <td>@appointment.Hour.ToString(@"hh\:mm")</td>
+                                        <td>@(appointment.User?.Names ?? "Sin usuario")</td>
+                                        <td>@(appointment.Doctor?.Names ?? "Sin doctor")</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a asp-controller="Appointment" asp-action="Details" asp-route-id="@appointment.Id"
+                                                   class="btn btn-sm btn-info">
+                                                    <i class="bi bi-eye"></i> Detalles
+                                                </a>
+                                                <a asp-controller="Appointment" asp-action="Edit" asp-route-id="@appointment.Id"
+                                                   class="btn btn-sm btn-warning">
+                                                    <i class="bi bi-pencil-square"></i> Editar
+                                                </a>
+                                                <a asp-controller="Appointment" asp-action="Destroy" asp-route-id="@appointment.Id"
+                                                   class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-trash"></i> Eliminar
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-muted">No hay citas registradas.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("NuipInput").addEventListener("change", function () {
+            const nuip = this.value.trim();
+            const info = document.getElementById("userInfo");
+            const userIdInput = document.getElementById("UserId");
+
+            if (nuip === "") {
+                info.textContent = "";
+                userIdInput.value = "";
+                return;
+            }
+
+            fetch(`/Appointment/GetUserByNuip?nuip=${nuip}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.found) {
+                        userIdInput.value = data.id;
+                        info.textContent = `Usuario: ${data.name}`;
+                        info.classList.remove("text-danger");
+                        info.classList.add("text-success");
+                    } else {
+                        userIdInput.value = "";
+                        info.textContent = "Usuario no encontrado.";
+                        info.classList.remove("text-success");
+                        info.classList.add("text-danger");
+                    }
+                })
+                .catch(() => {
+                    info.textContent = "Error buscando usuario.";
+                    info.classList.add("text-danger");
+                });
+        });
+    </script>
+}

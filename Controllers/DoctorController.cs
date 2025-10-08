@@ -40,8 +40,32 @@ public class DoctorController : Controller
         _context.SaveChanges();
         return RedirectToAction(nameof(Index));
     }
-
+    [HttpGet]
     public IActionResult Edit(int id)
+    {
+        var doctor = _context.doctors.Find(id);
+        return View(doctor);
+    }
+    [HttpPost]
+    public IActionResult Edit(int id, [Bind("Names,LastNames,Nuip,Speciality")] Doctor updateDoctor)
+    {
+        var doctor = _context.doctors.Find(id);
+        if (doctor == null)
+        {
+            return NotFound();
+        }
+        doctor.Names = updateDoctor.Names;
+        doctor.LastNames = updateDoctor.LastNames;
+        doctor.Nuip = updateDoctor.Nuip;
+        doctor.Speciality = updateDoctor.Speciality;
+        _context.doctors.Update(doctor);
+        _context.SaveChanges();
+        TempData["message"] = "Doctor editado exitosamente!";
+        return RedirectToAction(nameof(Index));
+        
+    }
+    
+    public IActionResult Details(int id)
     {
         var doctor = _context.doctors.Find(id);
         return View(doctor);

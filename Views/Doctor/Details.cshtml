@@ -1,0 +1,47 @@
+﻿@model SuVanCop.Models.Doctor
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-success text-white text-center rounded-top">
+            <h4 class="mb-0">Detalle del Usuario</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Columna izquierda: datos -->
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-4 fw-bold">ID</dt>
+                        <dd class="col-sm-8">@Model.Id</dd>
+
+                        <dt class="col-sm-4 fw-bold">Nombres</dt>
+                        <dd class="col-sm-8">@Model.Names</dd>
+
+                        <dt class="col-sm-4 fw-bold">Apellidos</dt>
+                        <dd class="col-sm-8">@Model.LastNames</dd>
+
+                        <dt class="col-sm-4 fw-bold">Nuip</dt>
+                        <dd class="col-sm-8">@Model.Nuip</dd>
+                        
+                        <dt class="col-sm-4 fw-bold">Especialidad</dt>
+                        <dd class="col-sm-8">@Model.Speciality</dd>
+                    </dl>
+                </div>
+
+                <!-- Columna derecha: imagen -->
+                
+            </div>
+        </div>
+
+        <div class="card-footer text-end">
+            <a asp-action="Index" asp-controller="Doctor" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil-square"></i> Editar
+            </a>
+            <a asp-action="Destroy" asp-route-id="@Model.Id" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Eliminar
+            </a>
+        </div>
+    </div>
+</div>
