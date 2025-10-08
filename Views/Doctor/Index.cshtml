@@ -1,0 +1,103 @@
+﻿@model IEnumerable<SuVanCop.Models.Doctor>
+
+    <div class="row g-4">
+        <!-- Formulario -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-primary text-white fw-bold text-center">
+                    Nuevo Doctor
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nombres</label>
+                            <input type="text" name="Names" class="form-control" placeholder="Ingrese nombres">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Apellidos</label>
+                            <input type="text" name="LastNames" class="form-control" placeholder="Ingrese apellidos">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Numero de documento</label>
+                            <input type="number" name="Nuip" class="form-control" placeholder="Ingrese Numero de documento">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Especialidad</label>
+                            <select name="Speciality" id="" class="form-control">
+                                <option value="General">Medicina General</option>
+                                <option value="Cardiologia">Cardiologia</option>
+                                <option value="Dermatologia">Dermatologia</option>
+                                </select>
+                        </div> 
+                        
+                        <div class="d-grid">
+                            <button class="btn btn-primary">
+                                <i class="bi bi-save me-2"></i> Guardar Informacion
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-secondary text-white fw-bold">
+                    Lista de Doctores
+                </div>
+                <div class="card-body">
+                    @if (TempData["message"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["message"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle text-center">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombres</th>
+                                    <th>Apellidos</th>
+                                    <th>Nuip</th>
+                                    <th>Especialidad</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var doctor in Model)
+                            {
+                                <tr>
+                                    <td>@doctor.Id</td>
+                                    <td>@doctor.Names</td>
+                                    <td>@doctor.LastNames</td>
+                                    <td>@doctor.Nuip</td>
+                                    <td>@doctor.Speciality</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-controller="Doctor" asp-action="Details" asp-route-id="@doctor.Id"
+                                               class="btn btn-sm btn-info">
+                                                <i class="bi bi-eye"></i> Detalles
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@doctor.Id" asp-controller="Doctor"
+                                               class="btn btn-sm btn-warning">
+                                                <i class="bi bi-pencil-square"></i> Editar
+                                            </a>
+                                            <a asp-action="Destroy" asp-route-id="@doctor.Id" asp-controller="Doctor"
+                                               class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
