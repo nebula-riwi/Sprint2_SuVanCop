@@ -21,7 +21,7 @@
                         <label class="form-label fw-semibold">Numero de documento</label>
                         <input type="number" name="Nuip" class="form-control" placeholder="Ingrese Numero de documento">
                     </div>
-                    
+                    <input type="hidden" name="Status" value="Activo" />
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Tipo de sangre (Rh)</label>
                         <select name="Rh" class="form-select">
@@ -39,7 +39,7 @@
 
                     
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Foto del usuario (tomada en vivo)</label><br />
+                        <label class="form-label fw-semibold">Foto del usuario</label><br />
                         <video id="video" width="100%" autoplay playsinline class="rounded border"></video><br />
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="capturarFoto()">
                             <i class="bi bi-camera"></i> Tomar foto
@@ -84,6 +84,7 @@
                             <th>Apellidos</th>
                             <th>Nuip</th>
                             <th>RH</th>
+                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                         </thead>
@@ -96,6 +97,7 @@
                                 <td>@user.LastNames</td>
                                 <td>@user.Nuip</td>
                                 <td>@user.Rh</td>
+                                <td>@user.Status</td>
                                 
                                 <td>
                                     <div class="btn-group" role="group">
@@ -107,9 +109,12 @@
                                            class="btn btn-sm btn-warning">
                                             <i class="bi bi-pencil-square"></i> Editar
                                         </a>
+                                        @{
+                                            string estado = user.Status == "Activo" ? "Desactivar" : "Activar";
+                                        }
                                         <a asp-action="Destroy" asp-route-id="@user.Id" asp-controller="User"
                                            class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i> Eliminar
+                                            <i class="bi bi-trash"></i> @estado
                                         </a>
                                     </div>
                                 </td>

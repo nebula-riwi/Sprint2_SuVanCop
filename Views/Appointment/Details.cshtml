@@ -1,0 +1,48 @@
+﻿@model SuVanCop.Models.Appointment
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-success text-white text-center rounded-top">
+            <h4 class="mb-0">Detalle del Usuario</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Columna izquierda: datos -->
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-4 fw-bold">ID</dt>
+                        <dd class="col-sm-8">@Model.Id</dd>
+
+                        <dt class="col-sm-4 fw-bold">ID</dt>
+                        <dd class="col-sm-8">@Model.Id</dd>
+
+                        <dt class="col-sm-4 fw-bold">Fecha</dt>
+                        <dd class="col-sm-8">@Model.Date</dd>
+
+                        <dt class="col-sm-4 fw-bold">Hora</dt>
+                        <dd class="col-sm-8">@Model.Hour</dd>
+                        
+                        <dt class="col-sm-4 fw-bold">Doctor</dt>
+                        <dd class="col-sm-8">@Model.Doctor.Names</dd>
+                        
+                        <dt class="col-sm-4 fw-bold">Paciente</dt>
+                        <dd class="col-sm-8">@Model.User.Names</dd>
+                    </dl>
+                </div>
+
+               
+                
+            </div>
+        </div>
+
+        <div class="card-footer text-end">
+            <a asp-action="Index" asp-controller="Appointment" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil-square"></i> Editar
+            </a>
+            
+        </div>
+    </div>
+</div>

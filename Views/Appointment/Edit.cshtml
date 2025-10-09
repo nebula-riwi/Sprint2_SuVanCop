@@ -1,0 +1,37 @@
+﻿@model SuVanCop.Models.Appointment
+
+@{
+    ViewData["Title"] = "Editar Doctor";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card mt-4">
+            <div class="card-body">
+                <h3 class="mb-3">Editar Usuario</h3>
+
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Date" class="form-label"></label>
+                        <input asp-for="Date" class="form-control" type="date" />
+                        <span asp-validation-for="Date" class="text-danger"></span>
+                    </div>
+
+                    
+
+                    <div class="mb-3">
+                        <label asp-for="Hour" class="form-label"></label>
+                        <input asp-for="Hour" class="form-control" type="time" />
+                        <span asp-validation-for="Hour" class="text-danger"></span>
+                    </div>
+                    
+   
+                    <button type="submit" class="btn btn-primary w-100">Guardar cambios</button>
+                    <a asp-action="Index" class="btn btn-secondary w-100 mt-2">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
