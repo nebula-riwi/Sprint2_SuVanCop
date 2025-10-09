@@ -1,7 +1,7 @@
 ﻿@model SuVanCop.Models.ViewModels.PublicScreenViewModel
 
 @{
-    Layout = null;
+Layout = null;
 }
 
 <!DOCTYPE html>
@@ -16,112 +16,83 @@
     <link rel="stylesheet" href="~/SuVanCop.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <div class="container">
-        <main role="main" class="pb-3">
-            <h2 class="text-center my-4">Turnos</h2>
-            <div id="turns" class="row">
-                @if (Model.CurrentTurn != null)
-                {
-                    <div class="col-md-4 mb-3">
-                        <div class="card shadow-sm">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Turno: @Model.CurrentTurn.Type @Model.CurrentTurn.Number</h5>
-                                <p class="card-text">Taquilla: 1</p>
-                            </div>
-                        </div>
+<div class="container">
+    <main role="main" class="pb-3">
+        <h2 class="text-center my-4">Turnos</h2>
+        <div id="turns" class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center" id="turnoActualizado">
+                        @if (Model.CurrentTurn != null)
+                        {
+                            <h5 class="card-title">Turno: @Model.CurrentTurn.Type[0] @Model.CurrentTurn.Number</h5>
+                            <p class="card-text">Taquilla: 1</p>
+                        }
+                        else
+                        {
+                            <div class="text-center alert alert-warning">No hay más turnos disponibles.</div>
+                        }
                     </div>
-                }
-                else
-                {
-                    <div class="col-md-12 text-center alert alert-warning">No hay más turnos disponibles.</div>
-                }
+                </div>
             </div>
-            <h2 class="text-center my-4">Cita Actual</h2>
-            <div class="row justify-content-center">
-                @if (Model.CurrentAppointment != null)
-                {
-                    <div class="col-md-6">
-                        <div class="card shadow-sm">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Paciente: @Model.CurrentAppointment.User?.FullName</h5>
-                                <p class="card-text">Doctor: @Model.CurrentAppointment.Doctor?.FullName</p>
-                                <p class="card-text">Consultorio: 1</p>
-                            </div>
-                        </div>
+        </div>
+
+        <h2 class="text-center my-4">Cita Actual</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        @if (Model.CurrentAppointment != null)
+                        {
+                        <h5 class="card-title">Paciente: @Model.CurrentAppointment.User?.FullName</h5>
+                        <p class="card-text">Doctor: @Model.CurrentAppointment.Doctor?.FullName</p>
+                        <p class="card-text">Consultorio: 1</p>
+                        }
+                        else
+                        {
+                        <div class="alert alert-warning text-center" role="alert">No hay cita actual.</div>
+                        }
                     </div>
-                }
-                else
-                {
-                    <div class="col-md-6">
-                        <div class="alert alert-warning text-center" role="alert">
-                            No hay cita actual.
-                        </div>
-                    </div>
-                }
+                </div>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+</div>
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/turnHub")
+        .build();
 
-    <script>
-        connection.on("UpdateTurn", function (number, type) {
-            $("#turns").html('');
+    connection.start()
+        .then(() => console.log("Conectado a SignalR (PublicScreen)"))
+        .catch(err => console.error("Error conectando a SignalR:", err));
 
-            if (number > 0) {
-                $("#turns").append(`<div class="col-md-4 mb-3">
-                                <div class="card shadow-sm">
-                                    <div class="card-body text-center">
-                                        <h5 class="card-title">Turno: ${type} ${number}</h5>
-                                        <p class="card-text">Taquilla: 1</p>
-                                    </div>
-                                </div>
-                            </div>`);
-            } else {
-                $("#turns").append(`<div class="col-md-12 text-center alert alert-warning">No hay más turnos disponibles.</div>`);
+    connection.on("UpdateTurn", function (number, type, desk) {
+        console.log("Turno actualizado:", type, number);
+
+        const content = number > 0
+            ? `Turno: ${type[0]} ${number} (Taquilla: ${desk})`
+            : `No hay más turnos disponibles.`;
+
+        $('#turnoActualizado').html(content);
+
+        $.ajax({
+            url: '/PublicScreen/GetUpdatedTurn',
+            method: 'GET',
+            success: function (data) {
+                $('#turnoActualizado').html(`Turno: ${data.type[0]} ${data.number}`);
+            },
+            error: function (err) {
+                console.error("Error al obtener el turno actualizado:", err);
             }
         });
-
-    </script>
-
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
-
-    <script>
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/turnHub")
-            .build();
-
-        connection.start()
-            .then(() => console.log("Conectado a SignalR (PublicScreen)"))
-            .catch(err => console.error("Error conectando a SignalR:", err));
-
-        connection.on("UpdateTurn", function (number, type) {
-            console.log("📡 Turno actualizado:", type, number);
-            $("#turns").html('');
-
-            if (number > 0) {
-                $("#turns").append(`
-                    <div class="col-md-4 mb-3">
-                        <div class="card shadow-sm">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Turno: ${type} ${number}</h5>
-                                <p class="card-text">Taquilla: 1</p>
-                            </div>
-                        </div>
-                    </div>`);
-            } else {
-                $("#turns").append(`
-                    <div class="col-md-12 text-center alert alert-warning">
-                        No hay más turnos disponibles.
-                    </div>`);
-            }
-        });
-    </script>
-
+    });
+</script>
 </body>
 </html>

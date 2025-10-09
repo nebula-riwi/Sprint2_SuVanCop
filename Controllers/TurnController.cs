@@ -6,11 +6,11 @@ using SuVanCop.Data;
 
 namespace SuVanCop.Controllers;
 
-public class TurnsController : Controller
+public class TurnController : Controller
 {
     private readonly PostgresDbContext _context;
 
-    public TurnsController(PostgresDbContext context)
+    public TurnController(PostgresDbContext context)
     {
         _context = context;
     }
@@ -18,16 +18,15 @@ public class TurnsController : Controller
     {
 
         var turns = await _context.turns
-                                .Where(t => t.Status != "OldCycle")
-                                .OrderBy(t => t.CreationDate)
-                                .ToListAsync();
+            .Where(t => t.Status != "OldCycle")
+            .OrderBy(t => t.CreationDate)
+            .ToListAsync();
 
         return View(turns);
     }
  
     public IActionResult Create()
     {
-        // Simplemente /Turns/Create
         return View();
     }
 
@@ -58,7 +57,7 @@ public class TurnsController : Controller
                     Number = newNumber,
                     Type = type,
                     CreationDate = DateTime.Now,
-                    Status = "Pending"
+                    Status = "pending"
                 };
 
                 _context.turns.Add(newTurn);
@@ -95,8 +94,7 @@ public class TurnsController : Controller
 
         _context.turns.UpdateRange(oldTurns);
         await _context.SaveChangesAsync();
-
-        // El siguiente CreateTurn de este tipo empezará en 1
+        
         return RedirectToAction(nameof(Index));
     }
  

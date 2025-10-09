@@ -14,20 +14,19 @@ public class PublicScreenController : Controller
         _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         var now = DateTime.UtcNow;
 
-        var activeTurn = _context.turns
+        var activeTurn = await _context.turns
             .Where(t => t.Status == "active")
             .OrderBy(t => t.CreationDate)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
 
-
-        var currentAppointment = _context.appointments
+        var currentAppointment = await _context.appointments
             .Include(a => a.Doctor)
             .Include(a => a.User)
-            .FirstOrDefault(a =>
+            .FirstOrDefaultAsync(a =>
                 a.Date == now.Date &&
                 a.Hour.Hour == now.Hour
             );
@@ -39,6 +38,21 @@ public class PublicScreenController : Controller
         };
 
         return View(viewModel);
+    }
+    [HttpGet]
+    public async Task<IActionResult> GetUpdatedTurn()
+    {
+        var activeTurn = await _context.turns
+            .Where(t => t.Status == "active")
+            .OrderBy(t => t.CreationDate)
+            .FirstOrDefaultAsync();
+
+        if (activeTurn != null)
+        {
+            return Json(new { number = activeTurn.Number, type = activeTurn.Type });
+        }
+
+        return Json(new { number = 0, type = "N/A" });
     }
 
 }
