@@ -1,0 +1,49 @@
+@model IEnumerable<SuVanCop.Models.Turn>
+
+@{
+    ViewData["Title"] = "Panel de Turnos";
+}
+
+<h1>Panel de Control de Turnos</h1>
+<p class="lead">Desde aquí se gestionan los turnos (llamar, atender, etc.) y se accede al turnero.</p>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <a asp-action="Create" class="btn btn-primary btn-lg">
+            Ir al Turnero (Generar Turno)
+        </a>
+    </div>
+
+    <div class="col-md-6">
+        <form asp-action="ResetCounter" method="post" onsubmit="return confirm('¿Seguro que desea reiniciar el contador GENERAL (G)? Esta acción es irreversible.');">
+            <input type="hidden" name="type" value="G" />
+            <button type="submit" class="btn btn-danger btn-lg">
+                Reiniciar Contador (G)
+            </button>
+        </form>
+    </div>
+</div>
+
+<hr/>
+<h2>Turnos Pendientes</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Type)</th>
+            <th>@Html.DisplayNameFor(model => model.Number)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+            <th>@Html.DisplayNameFor(model => model.CreationDate)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Type</td>
+                <td>@item.Number.ToString("D3")</td>
+                <td>@item.Status</td>
+                <td>@item.CreationDate</td>
+            </tr>
+        }
+    </tbody>
+</table>
