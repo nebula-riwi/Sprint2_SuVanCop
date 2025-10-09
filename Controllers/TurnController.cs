@@ -25,7 +25,7 @@ public class TurnsController : Controller
         return View(turns);
     }
  
-    public IActionResult Create()
+     public IActionResult Create()
     {
         // Simplemente /Turns/Create
         return View();
@@ -33,8 +33,9 @@ public class TurnsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateTurn(string type)
+    public IActionResult CreateTurn(string type)
     {
+        
         if (string.IsNullOrEmpty(type) || type.Length != 1)
         {
             return BadRequest("Tipo de turno inválido.");
@@ -42,17 +43,22 @@ public class TurnsController : Controller
 
         int newNumber;
 
-        using (var transaction = await _context.Database.BeginTransactionAsync())
+        // 2. Transacción de Base de Datos Síncrona
+        using (var transaction = _context.Database.BeginTransaction())
         {
             try
             {
-                var lastTurn = await _context.turns
+                // A. Buscar el último turno de forma SÍNCRONA
+                // *** USANDO: _context.turns ***
+                var lastTurn = _context.turns 
                     .Where(t => t.Type == type && t.Status != "OldCycle")
                     .OrderByDescending(t => t.CreationDate)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefault(); 
 
+                // B. Calcular el nuevo número
                 newNumber = (lastTurn != null) ? lastTurn.Number + 1 : 1;
 
+                // C. Crear el nuevo Turno
                 var newTurn = new Turn
                 {
                     Number = newNumber,
@@ -61,21 +67,27 @@ public class TurnsController : Controller
                     Status = "Pending"
                 };
 
-                _context.turns.Add(newTurn);
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                // D. Guardar cambios
+                _context.turns.Add(newTurn); // Usando _context.turns
+                _context.SaveChanges(); 
+                transaction.Commit(); 
 
+                // 3. Formatear y Redirigir
                 string fullCode = $"{newTurn.Type}-{newTurn.Number:D3}";
+                
+                // Si necesitas imprimir, la llamada iría aquí, asegurándote que ImprimirTicketTurno sea síncrona:
+                // ImprimirTicketTurno(newTurn.Type, newTurn.Number); 
 
                 return RedirectToAction("TurnGenerated", new { code = fullCode });
             }
-            catch
+            catch (Exception)
             {
-                await transaction.RollbackAsync();
+                // Manejo de error
+                transaction.Rollback();
                 return StatusCode(500, "Error interno al generar el turno.");
             }
         }
-    }
+    }                                                                    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResetCounter(string type)
@@ -99,11 +111,13 @@ public class TurnsController : Controller
         // El siguiente CreateTurn de este tipo empezará en 1
         return RedirectToAction(nameof(Index));
     }
- 
+
     public IActionResult TurnGenerated(string code)
     {
         ViewData["TurnCode"] = code;
         return View();
     }
+    
+    
 
 }

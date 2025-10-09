@@ -10,7 +10,7 @@
 <div class="row mt-5 justify-content-center">
     
     <div class="col-md-4 mb-4">
-        <form asp-controller="Turns" asp-action="CreateTurn" method="post">
+        <form asp-controller="Turn" asp-action="CreateTurn" method="post">
             <input type="hidden" name="type" value="G" /> 
             <button type="submit" class="btn btn-primary btn-lg w-100 turn-button">
                 Atención General (G)
@@ -20,7 +20,7 @@
     </div>
 
     <div class="col-md-4 mb-4">
-        <form asp-controller="Turns" asp-action="CreateTurn" method="post">
+        <form asp-controller="Turn" asp-action="CreateTurn" method="post">
             <input type="hidden" name="type" value="R" />
             <button type="submit" class="btn btn-info btn-lg w-100 turn-button">
                 Registro (R)
@@ -31,8 +31,8 @@
 </div>
 <style>
     .turn-button {
-        height: 200px; /* Alto más grande para un toque fácil */
-        font-size: 2.5em; /* Tamaño de fuente grande */
+        height: 200px;
+        font-size: 2.5em;
         font-weight: bold;
         transition: transform 0.2s;
     }
