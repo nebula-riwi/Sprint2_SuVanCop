@@ -94,10 +94,7 @@
                                                    class="btn btn-sm btn-warning">
                                                     <i class="bi bi-pencil-square"></i> Editar
                                                 </a>
-                                                <a asp-controller="Appointment" asp-action="Destroy" asp-route-id="@appointment.Id"
-                                                   class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Eliminar
-                                                </a>
+                                               
                                             </div>
                                         </td>
                                     </tr>
@@ -117,38 +114,31 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        document.getElementById("NuipInput").addEventListener("change", function () {
-            const nuip = this.value.trim();
-            const info = document.getElementById("userInfo");
-            const userIdInput = document.getElementById("UserId");
+<script>
+    document.getElementById("NuipInput").addEventListener("input", function () {
+        const nuip = this.value.trim();
 
-            if (nuip === "") {
-                info.textContent = "";
-                userIdInput.value = "";
-                return;
-            }
+        if (nuip.length === 0) {
+            document.getElementById("UserId").value = "";
+            document.getElementById("userInfo").innerText = "";
+            return;
+        }
 
-            fetch(`/Appointment/GetUserByNuip?nuip=${nuip}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.found) {
-                        userIdInput.value = data.id;
-                        info.textContent = `Usuario: ${data.name}`;
-                        info.classList.remove("text-danger");
-                        info.classList.add("text-success");
-                    } else {
-                        userIdInput.value = "";
-                        info.textContent = "Usuario no encontrado.";
-                        info.classList.remove("text-success");
-                        info.classList.add("text-danger");
-                    }
-                })
-                .catch(() => {
-                    info.textContent = "Error buscando usuario.";
-                    info.classList.add("text-danger");
-                });
-        });
-    </script>
-}
+        fetch(`/Appointment/GetUserByNuip?nuip=${encodeURIComponent(nuip)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.found) {
+                    document.getElementById("UserId").value = data.id;
+                    document.getElementById("userInfo").innerText = data.name;
+                } else {
+                    document.getElementById("UserId").value = "";
+                    document.getElementById("userInfo").innerText = "Usuario no encontrado";
+                }
+            })
+            .catch(error => {
+                console.error("Error al buscar usuario:", error);
+                document.getElementById("UserId").value = "";
+                document.getElementById("userInfo").innerText = "Error de conexión";
+            });
+    });
+</script>

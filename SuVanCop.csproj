@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="Views\Appointment\Edit.cshtml" />
     <AdditionalFiles Include="Views\Doctor\Details.cshtml" />
   </ItemGroup>
 

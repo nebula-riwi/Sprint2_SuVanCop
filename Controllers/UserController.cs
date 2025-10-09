@@ -145,8 +145,9 @@ public class UserController : Controller
         return View(users);
     }
     [HttpPost]
-    public IActionResult Create([Bind("Names,LastNames,Nuip,PictureUrl,Rh")] User user)
+    public IActionResult Create([Bind("Names,LastNames,Nuip,PictureUrl,Status,Rh")] User user)
     {
+        ModelState.Clear();
         if (ModelState.IsValid)
         {
             
@@ -173,12 +174,12 @@ public class UserController : Controller
                 };
 
                 var transferUtility = new TransferUtility(s3Client);
-                transferUtility.Upload(uploadRequest); // 👈 Sincrónico
+                transferUtility.Upload(uploadRequest);
 
                 
                 user.PictureUrl = $"https://{bucketName}.s3.amazonaws.com/{fileName}";
             }
-
+            
             _context.users.Add(user);
             _context.SaveChanges();
 
@@ -191,7 +192,6 @@ public class UserController : Controller
         return View(user);
     }
 
-    
     public IActionResult Destroy(int id)
     {
         var user = _context.users.Find(id);
@@ -199,13 +199,26 @@ public class UserController : Controller
         {
             return NotFound();
         }
-        _context.users.Remove(user);
+
+        if (user.Status == "Activo")
+        {
+            user.Status = "Inactivo";
+            TempData["message"] = "Usuario inactivado exitosamente!";
+        }
+        else if (user.Status == "Inactivo")
+        {
+            user.Status = "Activo";
+            TempData["message"] = "Usuario activado exitosamente!";
+        }
+
+        _context.users.Update(user);
         _context.SaveChanges();
-        TempData["message"] = "Usuario eliminado exitosamente!";
-        
+
         return RedirectToAction(nameof(Index));
-        
+
     }
+    
+   
     [HttpGet]
     public IActionResult Edit(int id)
     {
