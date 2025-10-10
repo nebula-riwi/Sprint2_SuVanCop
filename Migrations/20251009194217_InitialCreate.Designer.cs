@@ -12,7 +12,7 @@ using SuVanCop.Data;
 namespace SuVanCop.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20251008072146_InitialCreate")]
+    [Migration("20251009194217_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -139,6 +139,10 @@ namespace SuVanCop.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Rh")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 

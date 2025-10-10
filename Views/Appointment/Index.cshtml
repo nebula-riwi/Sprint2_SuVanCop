@@ -1,45 +1,55 @@
 ﻿@model IEnumerable<SuVanCop.Models.Appointment>
-
-<div class="row g-4">
-    <!-- Formulario -->
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-header bg-primary text-white fw-bold text-center">
-                Nueva Cita
+<!-- Botón para abrir el modal -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalNuevaCita">
+        <i class="bi bi-calendar-plus me-2"></i> Nueva Cita
+    </button>
+</div>
+<!-- Modal con formulario -->
+<div class="modal fade" id="modalNuevaCita" tabindex="-1" aria-labelledby="modalNuevaCitaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="modalNuevaCitaLabel">
+                    <i class="bi bi-calendar-plus me-2"></i> Registro de Cita
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <div class="card-body">
+            <div class="modal-body">
                 <form asp-action="Create" method="post">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Fecha</label>
-                        <input type="date" name="Date" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Hora</label>
-                        <input type="time" name="Hour" class="form-control" required>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Fecha</label>
+                            <input type="date" name="Date" class="form-control rounded-pill" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Hora</label>
+                            <input type="time" name="Hour" class="form-control rounded-pill" required>
+                        </div>
+
+                        <input type="hidden" name="Status" value="Pendiente">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Número de documento (NUIP)</label>
+                            <input type="number" id="NuipInput" class="form-control rounded-pill" placeholder="Ingrese número de documento" required>
+                            <input type="hidden" name="UserId" id="UserId" />
+                            <small id="userInfo" class="text-muted ms-2"></small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Doctor</label>
+                            <select name="DoctorId" class="form-select rounded-pill" required>
+                                <option value="">Seleccione un doctor</option>
+                                @foreach (var doctor in ViewBag.Doctors)
+                                {
+                                    <option value="@doctor.Id">@doctor.Names @doctor.LastNames</option>
+                                }
+                            </select>
+                        </div>
                     </div>
 
-                    <input type="hidden" name="Status" value="Pendiente">
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Número de documento (NUIP)</label>
-                        <input type="number" id="NuipInput" class="form-control" placeholder="Ingrese número de documento" required>
-                        <input type="hidden" name="UserId" id="UserId" />
-                        <small id="userInfo" class="text-muted"></small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Doctor</label>
-                        <select name="DoctorId" class="form-control" required>
-                            <option value="">Seleccione un doctor</option>
-                            @foreach (var doctor in ViewBag.Doctors)
-                            {
-                                <option value="@doctor.Id">@doctor.Names @doctor.LastNames</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="d-grid">
-                        <button class="btn btn-primary">
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-success rounded-pill">
                             <i class="bi bi-save me-2"></i> Guardar Información
                         </button>
                     </div>
@@ -47,72 +57,81 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Tabla -->
-    <div class="col-md-8">
-        <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-header bg-secondary text-white fw-bold">
-                Lista de Citas
+<!-- Tabla de citas -->
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-journal-medical me-2"></i> Lista de Citas</span>
+        <span class="badge bg-light text-dark px-3">@Model.Count() citas</span>
+    </div>
+    <div class="card-body">
+        @if (TempData["message"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="card-body">
-                @if (TempData["message"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        @TempData["message"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
+        }
 
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle text-center">
-                        <thead class="table-dark">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Usuario</th>
+                        <th>Doctor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var appointment in Model)
+                        {
                             <tr>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Usuario</th>
-                                <th>Doctor</th>
-                                <th>Acciones</th>
+                                <td>@appointment.Date.ToString("dd/MM/yyyy")</td>
+                                <td>@appointment.Hour.ToString(@"hh\:mm")</td>
+                                <td>
+                                    <span class="badge bg-info text-dark px-2">
+                                        @(appointment.User?.Names ?? "Sin usuario")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary text-white px-2">
+                                        @(appointment.Doctor?.Names ?? "Sin doctor")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-controller="Appointment" asp-action="Details" asp-route-id="@appointment.Id"
+                                           class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                            <i class="bi bi-eye me-1"></i> Detalles
+                                        </a>
+                                        <a asp-controller="Appointment" asp-action="Edit" asp-route-id="@appointment.Id"
+                                           class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                            <i class="bi bi-pencil-square me-1"></i> Editar
+                                        </a>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model != null && Model.Any())
-                            {
-                                @foreach (var appointment in Model)
-                                {
-                                    <tr>
-                                        <td>@appointment.Date.ToString("MM/dd/yyyy")</td>
-                                        <td>@appointment.Hour.ToString(@"hh\:mm")</td>
-                                        <td>@(appointment.User?.Names ?? "Sin usuario")</td>
-                                        <td>@(appointment.Doctor?.Names ?? "Sin doctor")</td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <a asp-controller="Appointment" asp-action="Details" asp-route-id="@appointment.Id"
-                                                   class="btn btn-sm btn-info">
-                                                    <i class="bi bi-eye"></i> Detalles
-                                                </a>
-                                                <a asp-controller="Appointment" asp-action="Edit" asp-route-id="@appointment.Id"
-                                                   class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-square"></i> Editar
-                                                </a>
-                                               
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="5" class="text-muted">No hay citas registradas.</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-muted py-4">
+                                <i class="bi bi-calendar-x me-2"></i> No hay citas registradas.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 <script>
     document.getElementById("NuipInput").addEventListener("input", function () {

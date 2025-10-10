@@ -54,7 +54,8 @@ namespace SuVanCop.Migrations
                     LastNames = table.Column<string>(type: "text", nullable: false),
                     Nuip = table.Column<string>(type: "text", nullable: false),
                     Rh = table.Column<string>(type: "text", nullable: false),
-                    PictureUrl = table.Column<string>(type: "text", nullable: false)
+                    PictureUrl = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -1,133 +1,140 @@
 ﻿@model IEnumerable<SuVanCop.Models.User>
 
-@{
-    Layout = "_ManageLayout";
-}
+<!-- Botón para abrir el modal -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
+        <i class="bi bi-person-plus me-2"></i> Nuevo Usuario
+    </button>
+</div>
 
-<div class="row g-4">
-    <!-- Formulario -->
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-header bg-primary text-white fw-bold text-center">
-                Nuevo Usuario
+<!-- Modal con formulario -->
+<div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header bg-primary text-white">
+                <img src="https://i.ibb.co/Qv3zm29F/image-1759875201459-removebg-preview.png" alt="SuVanCop Logo" style="height:40px;" class="me-2">
+                <h5 class="modal-title fw-bold" id="modalNuevoUsuarioLabel">Registro de Usuario</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <div class="card-body">
+            <div class="modal-body">
                 <form asp-action="Create" method="post">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Nombres</label>
-                        <input type="text" name="Names" class="form-control" placeholder="Ingrese nombres">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nombres</label>
+                            <input type="text" name="Names" class="form-control rounded-pill" placeholder="Ingrese nombres">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Apellidos</label>
+                            <input type="text" name="LastNames" class="form-control rounded-pill" placeholder="Ingrese apellidos">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Número de documento</label>
+                            <input type="number" name="Nuip" class="form-control rounded-pill" placeholder="Ingrese número de documento">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tipo de sangre (Rh)</label>
+                            <select name="Rh" class="form-select rounded-pill">
+                                <option value="" disabled selected>Seleccione el tipo de sangre</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="Status" value="Activo" />
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Foto del usuario</label><br />
+                            <video id="video" width="100%" autoplay playsinline class="rounded border"></video><br />
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2 rounded-pill" onclick="capturarFoto()">
+                                <i class="bi bi-camera"></i> Tomar foto
+                            </button>
+                            <canvas id="canvas" width="300" height="225" style="display:none;"></canvas>
+                            <div class="text-center">
+                                <img id="preview" src="#" alt="Previsualización" class="img-thumbnail mt-2" style="max-width:100%; height:auto;" />
+                            </div>
+                        </div>
+                        <input type="hidden" name="PictureUrl" id="PictureUrl" />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Apellidos</label>
-                        <input type="text" name="LastNames" class="form-control" placeholder="Ingrese apellidos">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Numero de documento</label>
-                        <input type="number" name="Nuip" class="form-control" placeholder="Ingrese Numero de documento">
-                    </div>
-                    <input type="hidden" name="Status" value="Activo" />
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Tipo de sangre (Rh)</label>
-                        <select name="Rh" class="form-select">
-                            <option value="" disabled selected>Seleccione el tipo de sangre</option>
-                            <option value="A+">A+</option>
-                            <option value="A-">A-</option>
-                            <option value="B+">B+</option>
-                            <option value="B-">B-</option>
-                            <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
-                            <option value="O+">O+</option>
-                            <option value="O-">O-</option>
-                        </select>
-                    </div>
-
-                    
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Foto del usuario</label><br />
-                        <video id="video" width="100%" autoplay playsinline class="rounded border"></video><br />
-                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="capturarFoto()">
-                            <i class="bi bi-camera"></i> Tomar foto
-                        </button>
-                        <canvas id="canvas" width="300" height="225" style="display:none;"></canvas>
-                        <img id="preview" src="#" alt="Previsualización" class="img-thumbnail mt-2" style="max-width:100%;" />
-                    </div>
-
-                    <input type="hidden" name="PictureUrl" id="PictureUrl" />
-
-                    <div class="d-grid">
-                        <button class="btn btn-primary">
-                            <i class="bi bi-save me-2"></i> Guardar Informacion
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-success rounded-pill">
+                            <i class="bi bi-save me-2"></i> Guardar Información
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Tabla -->
-    <div class="col-md-8">
-        <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-header bg-secondary text-white fw-bold">
-                Lista de Usuarios
+<!-- Tabla de usuarios -->
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-people-fill me-2"></i> Lista de Usuarios</span>
+        <span class="badge bg-light text-dark px-3">@Model.Count() usuarios</span>
+    </div>
+    <div class="card-body">
+        @if (TempData["message"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="card-body">
-                @if (TempData["message"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        @TempData["message"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
+        }
 
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle text-center">
-                        <thead class="table-dark">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Nuip</th>
+                        <th>RH</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
                         <tr>
-                            <th>ID</th>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
-                            <th>Nuip</th>
-                            <th>RH</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <td>@user.Id</td>
+                            <td>@user.Names</td>
+                            <td>@user.LastNames</td>
+                            <td>@user.Nuip</td>
+                            <td>@user.Rh</td>
+                            <td>
+                                <span class="badge @(user.Status == "Activo" ? "bg-success" : "bg-danger") px-3">
+                                    @user.Status
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-controller="User" asp-action="Details" asp-route-id="@user.Id"
+                                       class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                        <i class="bi bi-eye me-1"></i> Detalles
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@user.Id" asp-controller="User"
+                                       class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                        <i class="bi bi-pencil-square me-1"></i> Editar
+                                    </a>
+                                    @{
+                                        string estado = user.Status == "Activo" ? "Desactivar" : "Activar";
+                                    }
+                                    <a asp-action="Destroy" asp-route-id="@user.Id" asp-controller="User"
+                                       class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                        <i class="bi bi-trash me-1"></i> @estado
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var user in Model)
-                        {
-                            <tr>
-                                <td>@user.Id</td>
-                                <td>@user.Names</td>
-                                <td>@user.LastNames</td>
-                                <td>@user.Nuip</td>
-                                <td>@user.Rh</td>
-                                <td>@user.Status</td>
-                                
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a asp-controller="User" asp-action="Details" asp-route-id="@user.Id"
-                                           class="btn btn-sm btn-info">
-                                            <i class="bi bi-eye"></i> Detalles
-                                        </a>
-                                        <a asp-action="Edit" asp-route-id="@user.Id" asp-controller="User"
-                                           class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil-square"></i> Editar
-                                        </a>
-                                        @{
-                                            string estado = user.Status == "Activo" ? "Desactivar" : "Activar";
-                                        }
-                                        <a asp-action="Destroy" asp-route-id="@user.Id" asp-controller="User"
-                                           class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i> @estado
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

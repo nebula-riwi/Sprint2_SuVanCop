@@ -130,7 +130,7 @@ namespace SuVanCop.Controllers
             ViewBag.Doctors = _context.doctors.ToList();
             return View(appointment);
         }
-
+     
 
     }
 }
