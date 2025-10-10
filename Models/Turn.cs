@@ -6,4 +6,5 @@ public class Turn
     public int Number { get; set; }
     public required string Type  { get; set; }
     public DateTime CreationDate { get; set; }
+    public required string Status { get; set; }
 }

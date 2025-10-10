@@ -36,7 +36,8 @@ namespace SuVanCop.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Number = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,7 +52,10 @@ namespace SuVanCop.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Names = table.Column<string>(type: "text", nullable: false),
                     LastNames = table.Column<string>(type: "text", nullable: false),
-                    Nuip = table.Column<string>(type: "text", nullable: false)
+                    Nuip = table.Column<string>(type: "text", nullable: false),
+                    Rh = table.Column<string>(type: "text", nullable: false),
+                    PictureUrl = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,8 +68,8 @@ namespace SuVanCop.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    Hour = table.Column<TimeSpan>(type: "interval", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Hour = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: true),
                     DoctorId = table.Column<int>(type: "integer", nullable: true)

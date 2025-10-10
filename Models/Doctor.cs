@@ -9,4 +9,6 @@ public class Doctor
     public required string Speciality { get; set; }
 
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    
+    public string FullName => $"{Names} {LastNames}";
 }
