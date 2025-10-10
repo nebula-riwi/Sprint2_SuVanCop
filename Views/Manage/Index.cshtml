@@ -5,68 +5,93 @@
     Layout = "_ManageLayout";
 }
 
-<div class="container mt-4">
-    <h2 class="text-center">Panel de Administración</h2>
+<div class="container py-5">
+    
 
-    <div class="row justify-content-center">
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    Gestión de Usuarios
-                </div>
-                <div class="card-body">
-                    <p>Administra los usuarios del sistema.</p>
-                    <a href="@Url.Action("Index", "User")" class="btn btn-primary btn-block">Ir a Usuarios</a>
+    <!-- Sección de módulos -->
+    <div class="row g-4">
+        <!-- Módulo de Usuarios -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-4 h-100 bg-light bg-opacity-75">
+                <div class="card-body d-flex flex-column justify-content-between p-4">
+                    <div>
+                        <h4 class="fw-bold text-primary"><i class="bi bi-people-fill me-2"></i> Usuarios</h4>
+                        <p class="text-muted">Administra los usuarios registrados en el sistema.</p>
+                    </div>
+                    <div class="text-end">
+                        <a href="@Url.Action("Index", "User")" class="btn btn-primary rounded-pill px-4">
+                            <i class="bi bi-arrow-right-circle me-1"></i> Ir a Usuarios
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    Gestión de Citas
-                </div>
-                <div class="card-body">
-                    <p>Administra las citas programadas.</p>
-                    <a href="@Url.Action("Index", "Appointment")" class="btn btn-primary btn-block">Ir a Citas</a>
+        <!-- Módulo de Citas -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-4 h-100 bg-white bg-opacity-75">
+                <div class="card-body d-flex flex-column justify-content-between p-4">
+                    <div>
+                        <h4 class="fw-bold text-primary"><i class="bi bi-calendar-check me-2"></i> Citas</h4>
+                        <p class="text-muted">Gestiona las citas médicas programadas.</p>
+                    </div>
+                    <div class="text-end">
+                        <a href="@Url.Action("Index", "Appointment")" class="btn btn-primary rounded-pill px-4">
+                            <i class="bi bi-arrow-right-circle me-1"></i> Ir a Citas
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    Gestión de Médicos
-                </div>
-                <div class="card-body">
-                    <p>Administra los médicos y sus horarios.</p>
-                    <a href="@Url.Action("Index", "Doctor")" class="btn btn-primary btn-block">Ir a Médicos</a>
+        <!-- Módulo de Médicos -->
+        <div class="col-md-12">
+            <div class="card border-0 shadow-lg rounded-4 bg-light bg-opacity-75">
+                <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center p-4">
+                    <div>
+                        <h4 class="fw-bold text-primary"><i class="bi bi-person-badge me-2"></i> Médicos</h4>
+                        <p class="text-muted mb-0">Administra los médicos y sus horarios clínicos.</p>
+                    </div>
+                    <a href="@Url.Action("Index", "Doctor")" class="btn btn-primary rounded-pill px-4 mt-3 mt-md-0">
+                        <i class="bi bi-arrow-right-circle me-1"></i> Ir a Médicos
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="text-center mt-5">
-        <h3>Gestión de Turnos</h3>
+    <!-- Sección de Turnos -->
+    <div class="mt-5">
+        <div class="card border-0 shadow-lg rounded-4 bg-white bg-opacity-75">
+            <div class="card-body text-center p-4">
+                <h3 class="fw-bold text-secondary mb-3">
+                    <i class="bi bi-clock-history me-2"></i> Turno Actual
+                </h3>
 
-        @if (Model.CurrentTurn != null)
-        {
-            <div class="alert alert-info mt-3">
-                Turno actual: <strong>@Model.CurrentTurn.Type @Model.CurrentTurn.Number</strong>
+                @if (Model.CurrentTurn != null)
+                {
+                    <div class="d-inline-block px-4 py-3 bg-light rounded-pill shadow-sm mb-3">
+                        <span class="fs-5 text-dark">
+                            <i class="bi bi-person-lines-fill me-2"></i>
+                            <strong>@Model.CurrentTurn.Type @Model.CurrentTurn.Number</strong>
+                        </span>
+                    </div>
+                    <br />
+                    <button id="changeTurnButton" class="btn btn-danger rounded-pill px-4" data-turn-id="@Model.CurrentTurn.Id">
+                        <i class="bi bi-arrow-repeat me-1"></i> Siguiente Turno
+                    </button>
+                }
+                else
+                {
+                    <div class="alert alert-warning rounded-pill d-inline-block px-4 py-2 shadow-sm">
+                        <i class="bi bi-exclamation-triangle me-2"></i> No hay un turno activo actualmente.
+                    </div>
+                }
             </div>
-
-            <button id="changeTurnButton" class="btn btn-danger" data-turn-id="@Model.CurrentTurn.Id">
-                Siguiente Turno
-            </button>
-        }
-        else
-        {
-            <div class="alert alert-warning mt-3">
-                No hay un turno activo actualmente.
-            </div>
-        }
+        </div>
     </div>
 </div>
+
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"
