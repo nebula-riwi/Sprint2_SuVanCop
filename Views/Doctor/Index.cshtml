@@ -1,107 +1,116 @@
 ﻿@model IEnumerable<SuVanCop.Models.Doctor>
 
-@{
-    Layout = "_ManageLayout";
-}
+<!-- Botón para abrir el modal -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalNuevoDoctor">
+        <i class="bi bi-person-plus me-2"></i> Nuevo Doctor
+    </button>
+</div>
 
-<div class="row g-4">
-        <!-- Formulario -->
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-primary text-white fw-bold text-center">
-                    Nuevo Doctor
-                </div>
-                <div class="card-body">
-                    <form asp-action="Create" method="post">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Nombres</label>
-                            <input type="text" name="Names" class="form-control" placeholder="Ingrese nombres">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Apellidos</label>
-                            <input type="text" name="LastNames" class="form-control" placeholder="Ingrese apellidos">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Numero de documento</label>
-                            <input type="number" name="Nuip" class="form-control" placeholder="Ingrese Numero de documento">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Especialidad</label>
-                            <select name="Speciality" id="" class="form-control">
-                                <option value="General">Medicina General</option>
-                                <option value="Cardiologia">Cardiologia</option>
-                                <option value="Dermatologia">Dermatologia</option>
-                                </select>
-                        </div> 
-                        
-                        <div class="d-grid">
-                            <button class="btn btn-primary">
-                                <i class="bi bi-save me-2"></i> Guardar Informacion
-                            </button>
-                        </div>
-                    </form>
-                </div>
+<!-- Modal con formulario -->
+<div class="modal fade" id="modalNuevoDoctor" tabindex="-1" aria-labelledby="modalNuevoDoctorLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="modalNuevoDoctorLabel">
+                    <i class="bi bi-person-badge me-2"></i> Registro de Doctor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-        </div>
+            <div class="modal-body">
+                <form asp-action="Create" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
 
-        <!-- Tabla -->
-        <div class="col-md-8">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-secondary text-white fw-bold">
-                    Lista de Doctores
-                </div>
-                <div class="card-body">
-                    @if (TempData["message"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        @TempData["message"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <label class="form-label fw-semibold">Nombres</label>
+                            <input type="text" name="Names" class="form-control rounded-pill" placeholder="Ingrese nombres">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Apellidos</label>
+                            <input type="text" name="LastNames" class="form-control rounded-pill" placeholder="Ingrese apellidos">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Número de documento</label>
+                            <input type="number" name="Nuip" class="form-control rounded-pill" placeholder="Ingrese número de documento">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Especialidad</label>
+                            <select name="Speciality" class="form-select rounded-pill">
+                                <option value="General">Medicina General</option>
+                                <option value="Cardiologia">Cardiología</option>
+                                <option value="Dermatologia">Dermatología</option>
+                            </select>
+                        </div>
                     </div>
-                }
-
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle text-center">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombres</th>
-                                    <th>Apellidos</th>
-                                    <th>Nuip</th>
-                                    <th>Especialidad</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var doctor in Model)
-                            {
-                                <tr>
-                                    <td>@doctor.Id</td>
-                                    <td>@doctor.Names</td>
-                                    <td>@doctor.LastNames</td>
-                                    <td>@doctor.Nuip</td>
-                                    <td>@doctor.Speciality</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-controller="Doctor" asp-action="Details" asp-route-id="@doctor.Id"
-                                               class="btn btn-sm btn-info">
-                                                <i class="bi bi-eye"></i> Detalles
-                                            </a>
-                                            <a asp-action="Edit" asp-route-id="@doctor.Id" asp-controller="Doctor"
-                                               class="btn btn-sm btn-warning">
-                                                <i class="bi bi-pencil-square"></i> Editar
-                                            </a>
-                                            <a asp-action="Destroy" asp-route-id="@doctor.Id" asp-controller="Doctor"
-                                               class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash"></i> Eliminar
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-success rounded-pill">
+                            <i class="bi bi-save me-2"></i> Guardar Información
+                        </button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Tabla de doctores -->
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-person-lines-fill me-2"></i> Lista de Doctores</span>
+        <span class="badge bg-light text-dark px-3">@Model.Count() doctores</span>
+    </div>
+    <div class="card-body">
+        @if (TempData["message"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Nuip</th>
+                        <th>Especialidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var doctor in Model)
+                    {
+                        <tr>
+                            <td>@doctor.Id</td>
+                            <td>@doctor.Names</td>
+                            <td>@doctor.LastNames</td>
+                            <td>@doctor.Nuip</td>
+                            <td>
+                                <span class="badge bg-info text-dark px-3">@doctor.Speciality</span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-controller="Doctor" asp-action="Details" asp-route-id="@doctor.Id"
+                                       class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                        <i class="bi bi-eye me-1"></i> Detalles
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@doctor.Id" asp-controller="Doctor"
+                                       class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                        <i class="bi bi-pencil-square me-1"></i> Editar
+                                    </a>
+                                    <a asp-action="Destroy" asp-route-id="@doctor.Id" asp-controller="Doctor"
+                                       class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                        <i class="bi bi-trash me-1"></i> Eliminar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
