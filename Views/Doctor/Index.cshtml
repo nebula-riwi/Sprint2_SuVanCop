@@ -41,6 +41,7 @@
                                 <option value="Dermatologia">Dermatología</option>
                             </select>
                         </div>
+                        <input type="hidden" name="Status" value="Activo" />
                     </div>
                     <div class="d-grid mt-4">
                         <button class="btn btn-success rounded-pill">
@@ -77,6 +78,7 @@
                         <th>Apellidos</th>
                         <th>Nuip</th>
                         <th>Especialidad</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -92,6 +94,11 @@
                                 <span class="badge bg-info text-dark px-3">@doctor.Speciality</span>
                             </td>
                             <td>
+                                <span class="badge @(doctor.Status == "Activo" ? "bg-success" : "bg-danger") px-3">
+                                    @doctor.Status
+                                </span>
+                            </td>
+                            <td>
                                 <div class="d-flex justify-content-center gap-2">
                                     <a asp-controller="Doctor" asp-action="Details" asp-route-id="@doctor.Id"
                                        class="btn btn-sm btn-outline-info rounded-pill px-3">
@@ -101,9 +108,12 @@
                                        class="btn btn-sm btn-outline-warning rounded-pill px-3">
                                         <i class="bi bi-pencil-square me-1"></i> Editar
                                     </a>
+                                    @{
+                                        string estado = doctor.Status == "Activo" ? "Desactivar" : "Activar";
+                                    }
                                     <a asp-action="Destroy" asp-route-id="@doctor.Id" asp-controller="Doctor"
                                        class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                                        <i class="bi bi-trash me-1"></i> Eliminar
+                                        <i class="bi bi-trash me-1"></i> @estado
                                     </a>
                                 </div>
                             </td>

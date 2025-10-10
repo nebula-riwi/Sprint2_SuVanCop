@@ -21,7 +21,7 @@ public class DoctorController : Controller
         return View(doctors);
     }
 
-    public IActionResult Create([Bind("Names,LastNames,Nuip,Speciality")]Doctor doctor)
+    public IActionResult Create([Bind("Names,LastNames,Nuip,Speciality,Status")]Doctor doctor)
     {
         if (ModelState.IsValid)
             {
@@ -58,7 +58,31 @@ public class DoctorController : Controller
         return RedirectToAction(nameof(Index));
         
     }
-    
+    public IActionResult Destroy(int id)
+    {
+        var doctor = _context.doctors.Find(id);
+        if (doctor == null)
+        {
+            return NotFound();
+        }
+
+        if (doctor.Status == "Activo")
+        {
+            doctor.Status = "Inactivo";
+            TempData["message"] = "Usuario inactivado exitosamente!";
+        }
+        else if (doctor.Status == "Inactivo")
+        {
+            doctor.Status = "Activo";
+            TempData["message"] = "Usuario activado exitosamente!";
+        }
+
+        _context.doctors.Update(doctor);
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+
+    }
     public IActionResult Details(int id)
     {
         var doctor = _context.doctors.Find(id);

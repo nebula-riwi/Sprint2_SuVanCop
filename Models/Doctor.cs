@@ -7,6 +7,7 @@ public class Doctor
     public required string LastNames { get; set; }
     public required string Nuip { get; set; }
     public required string Speciality { get; set; }
+    public required string Status  { get; set; }
 
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     
