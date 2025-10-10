@@ -1,49 +1,74 @@
 ﻿@model SuVanCop.Models.User
 
 <div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-3">
-        <div class="card-header bg-success text-white text-center rounded-top">
-            <h4 class="mb-0">Detalle del Usuario</h4>
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white text-center rounded-top-4">
+            <h4 class="mb-0"><i class="bi bi-person-vcard me-2"></i> Detalle del Usuario</h4>
         </div>
-        <div class="card-body">
-            <div class="row">
+        <div class="card-body px-4 py-5">
+            <div class="row g-4 align-items-center">
                 <!-- Columna izquierda: datos -->
                 <div class="col-md-8">
-                    <dl class="row">
-                        <dt class="col-sm-4 fw-bold">ID</dt>
-                        <dd class="col-sm-8">@Model.Id</dd>
-
-                        <dt class="col-sm-4 fw-bold">Nombres</dt>
-                        <dd class="col-sm-8">@Model.Names</dd>
-
-                        <dt class="col-sm-4 fw-bold">Apellidos</dt>
-                        <dd class="col-sm-8">@Model.LastNames</dd>
-
-                        <dt class="col-sm-4 fw-bold">Nuip</dt>
-                        <dd class="col-sm-8">@Model.Nuip</dd>
-                        
-                        <dt class="col-sm-4 fw-bold">RH</dt>
-                        <dd class="col-sm-8">@Model.Rh</dd>
-                    </dl>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-semibold text-secondary">🆔 ID</div>
+                        <div class="col-sm-8">@Model.Id</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-semibold text-secondary">👤 Nombres</div>
+                        <div class="col-sm-8">@Model.Names</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-semibold text-secondary">👥 Apellidos</div>
+                        <div class="col-sm-8">@Model.LastNames</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-semibold text-secondary">🧾 NUIP</div>
+                        <div class="col-sm-8">@Model.Nuip</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-semibold text-secondary">🩸 RH</div>
+                        <div class="col-sm-8">@Model.Rh</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-semibold text-secondary">📌 Estado</div>
+                        <div class="col-sm-8">
+                            <span class="badge @(Model.Status == "Activo" ? "bg-success" : "bg-danger") px-3 py-1">
+                                @Model.Status
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Columna derecha: imagen -->
-                <div class="col-md-4 d-flex align-items-start justify-content-end">
-                    <img src="@Model.PictureUrl" alt="Foto del usuario" class="img-fluid rounded shadow" style="max-width: 150px;" />
+                <!-- Columna derecha: imagen circular -->
+                <div class="col-md-4 text-center">
+                    <img src="@Model.PictureUrl" alt="Foto del usuario"
+                         class="rounded-circle shadow img-fluid border border-3 border-primary"
+                         style="width: 160px; height: 160px; object-fit: cover;" />
+                    <div class="mt-2 text-muted">Foto del usuario</div>
                 </div>
             </div>
         </div>
 
-        <div class="card-footer text-end">
-            <a asp-action="Index" asp-controller="User" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Volver
+        <div class="card-footer d-flex flex-wrap justify-content-end gap-2 px-4 py-3 bg-light rounded-bottom-4">
+            <a asp-action="Index" asp-controller="User" class="btn btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Volver
             </a>
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-                <i class="bi bi-pencil-square"></i> Editar
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning rounded-pill px-3">
+                <i class="bi bi-pencil-square me-1"></i> Editar
             </a>
-            <a asp-action="Destroy" asp-route-id="@Model.Id" class="btn btn-danger">
-                <i class="bi bi-trash"></i> Eliminar
+            <form asp-action="ReimprimirCarnet" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-outline-dark rounded-pill px-3">
+                    <i class="bi bi-printer me-1"></i> Reimprimir Carnet
+                </button>
+            </form>
+            @{
+                string estado = Model.Status == "Activo" ? "Desactivar" : "Activar";
+            }
+            <a asp-action="Destroy" asp-route-id="@Model.Id" class="btn btn-outline-danger rounded-pill px-3">
+                <i class="bi bi-trash me-1"></i> @estado
             </a>
         </div>
     </div>
 </div>
+

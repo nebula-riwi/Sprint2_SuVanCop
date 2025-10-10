@@ -33,13 +33,7 @@ public class DoctorController : Controller
             
     }
 
-    public IActionResult Destroy(int id)
-    {
-        var doctor = _context.doctors.Find(id);
-        _context.doctors.Remove(doctor);
-        _context.SaveChanges();
-        return RedirectToAction(nameof(Index));
-    }
+    
     [HttpGet]
     public IActionResult Edit(int id)
     {

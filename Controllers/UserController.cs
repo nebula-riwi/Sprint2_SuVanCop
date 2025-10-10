@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Runtime.Versioning;
 using Microsoft.Extensions.Configuration;
 using System.Drawing;
 using Amazon.S3;
@@ -12,7 +13,7 @@ using SuVanCop.Models;
 using SuVanCop.Data;
 
 namespace SuVanCop.Controllers;
-
+[SupportedOSPlatform("windows")]
 public class UserController : Controller
 {
     private readonly PostgresDbContext _context;
@@ -59,7 +60,7 @@ public class UserController : Controller
         return bitmap;
     }
 
-  private void ImprimirTicketCarnet(User user)
+ private void ImprimirTicketCarnet(User user)
 {
     PrintDocument pd = new PrintDocument();
     pd.PrinterSettings.PrinterName = "XP-58";
@@ -68,26 +69,27 @@ public class UserController : Controller
     {
         Graphics g = e.Graphics;
         int ancho = 220;
-        int alto = 500; 
+        int alto = 500;
+        int desfaseX = -15; 
+        int desfaseY = 50; 
 
-        
         g.FillRectangle(Brushes.White, 0, 0, ancho, alto);
 
-        
+       
         using var httpLogo = new HttpClient();
         var logoBytes = httpLogo.GetByteArrayAsync("https://i.ibb.co/Qv3zm29F/image-1759875201459-removebg-preview.png").Result;
         using var logoStream = new MemoryStream(logoBytes);
         var logo = Image.FromStream(logoStream);
 
-            int logoWidth = 100;
-            int logoHeight = 40;
-            int logoX = (ancho - logoWidth) / 2;
-            int logoY = 10;
+        int logoWidth = 120; 
+        int logoHeight = 90;
+        int logoX = (ancho - logoWidth) / 2 + desfaseX;
+        int logoY = 10;
 
-            g.DrawImage(logo, logoX, logoY, logoWidth, logoHeight);
+        g.DrawImage(logo, logoX, logoY, logoWidth, logoHeight);
 
         
-        g.DrawLine(new Pen(Color.DarkGray, 10), 15, 40, ancho - 15, 40);
+        g.DrawLine(new Pen(Color.DarkGray, 10), 15, 40 + desfaseY, ancho - 15, 40 + desfaseY);
 
         
         try
@@ -99,8 +101,8 @@ public class UserController : Controller
             var foto = Image.FromStream(fotoStream);
 
             int imgSize = 120;
-            int imgX = (ancho - imgSize) / 2;
-            int imgY = 50;
+            int imgX = (ancho - imgSize) / 2 + desfaseX;
+            int imgY = 50 + desfaseY;
 
             using var path = new System.Drawing.Drawing2D.GraphicsPath();
             path.AddEllipse(imgX, imgY, imgSize, imgSize);
@@ -110,33 +112,33 @@ public class UserController : Controller
         }
         catch
         {
-            g.DrawString("[Foto no disponible]", new Font("Arial", 8, FontStyle.Italic), Brushes.Gray, (ancho - 100) / 2, 90);
+            g.DrawString("[Foto no disponible]", new Font("Arial", 8, FontStyle.Italic), Brushes.Gray, (ancho - 100) / 2 + desfaseX, 90 + desfaseY);
         }
 
-        
-        g.DrawLine(Pens.LightGray, 20, 160, ancho - 20, 160);
+        // Línea decorativa
+        g.DrawLine(Pens.LightGray, 20, 160 + desfaseY, ancho - 20, 160 + desfaseY);
 
-        
+        // Datos
         var datosFont = new Font("Consolas", 10, FontStyle.Regular);
         string nombre = $"Nombre: {user.Names} {user.LastNames}";
         string nuip = $"NUIP: {user.Nuip}";
         string rh = $"RH: {user.Rh}";
 
-        g.DrawString(nombre, datosFont, Brushes.Black, (ancho - g.MeasureString(nombre, datosFont).Width) / 2, 170);
-        g.DrawString(nuip, datosFont, Brushes.Black, (ancho - g.MeasureString(nuip, datosFont).Width) / 2, 195);
-        g.DrawString(rh, datosFont, Brushes.Black, (ancho - g.MeasureString(nuip, datosFont).Width) / 2, 225);
+        g.DrawString(nombre, datosFont, Brushes.Black, (ancho - g.MeasureString(nombre, datosFont).Width) / 2 + desfaseX, 170 + desfaseY);
+        g.DrawString(nuip, datosFont, Brushes.Black, (ancho - g.MeasureString(nuip, datosFont).Width) / 2 + desfaseX, 195 + desfaseY);
+        g.DrawString(rh, datosFont, Brushes.Black, (ancho - g.MeasureString(rh, datosFont).Width) / 2 + desfaseX, 225 + desfaseY);
 
-        // Línea decorativa
-        g.DrawLine(Pens.LightGray, 20, 220, ancho - 20, 220);
+        g.DrawLine(Pens.LightGray, 20, 220 + desfaseY, ancho - 20, 220 + desfaseY);
 
+        // Código de barras
         var barcodeImage = GenerarCodigoDeBarras(user.Nuip);
-        g.DrawImage(barcodeImage, (ancho - 160) / 2, 250, 160, 60);
-
-       
+        g.DrawImage(barcodeImage, (ancho - 160) / 2 + desfaseX, 250 + desfaseY, 160, 60);
     };
 
     pd.Print();
 }
+
+
 
 
     public IActionResult Index()
@@ -263,5 +265,18 @@ public class UserController : Controller
         return View("Details", user);
     }
 
+    [HttpPost]
+    public IActionResult ReimprimirCarnet(int id)
+    {
+        var user = _context.users.Find(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        ImprimirTicketCarnet(user);
+        TempData["message"] = "Carnet reimpreso exitosamente!";
+        return RedirectToAction("Details", new { id = user.Id });
+    }
 
 }
