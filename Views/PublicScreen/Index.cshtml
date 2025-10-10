@@ -25,12 +25,12 @@ Layout = null;
                     <div class="card-body text-center" id="turnoActualizado">
                         @if (Model.CurrentTurn != null)
                         {
-                            <h5 class="card-title">Turno: @Model.CurrentTurn.Type[0] @Model.CurrentTurn.Number</h5>
-                            <p class="card-text">Taquilla: 1</p>
+                        <h5 class="card-title">Turno: @Model.CurrentTurn.Type[0] @Model.CurrentTurn.Number</h5>
+                        <p class="card-text">Taquilla: 1</p>
                         }
                         else
                         {
-                            <div class="text-center alert alert-warning">No hay más turnos disponibles.</div>
+                        <div class="text-center alert alert-warning">No hay más turnos disponibles.</div>
                         }
                     </div>
                 </div>
@@ -42,16 +42,19 @@ Layout = null;
             <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-body text-center">
-                        @if (Model.CurrentAppointment != null)
-                        {
-                        <h5 class="card-title">Paciente: @Model.CurrentAppointment.User?.FullName</h5>
-                        <p class="card-text">Doctor: @Model.CurrentAppointment.Doctor?.FullName</p>
-                        <p class="card-text">Consultorio: 1</p>
-                        }
-                        else
-                        {
-                        <div class="alert alert-warning text-center" role="alert">No hay cita actual.</div>
-                        }
+                        <div id="citaActualizada">
+                            @if (Model.CurrentAppointment != null)
+                            {
+                            <h5 class="card-title">Paciente: @Model.CurrentAppointment.User?.FullName</h5>
+                            <p class="card-text">Doctor: @Model.CurrentAppointment.Doctor?.FullName</p>
+                            <p class="card-text">Consultorio: 1</p>
+                            <p class="card-text">Hora: @Model.CurrentAppointment.Hour.ToString("HH:mm")</p>
+                            }
+                            else
+                            {
+                            <div class="alert alert-warning text-center" role="alert">No hay cita actual.</div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -73,25 +76,27 @@ Layout = null;
         .then(() => console.log("Conectado a SignalR (PublicScreen)"))
         .catch(err => console.error("Error conectando a SignalR:", err));
 
-    connection.on("UpdateTurn", function (number, type, desk) {
-        console.log("Turno actualizado:", type, number);
-
+    connection.on("UpdateTurn", function (id, number, type) {
         const content = number > 0
-            ? `Turno: ${type[0]} ${number} (Taquilla: ${desk})`
-            : `No hay más turnos disponibles.`;
+            ? `
+            <h5 class="card-title">Turno: ${type[0]} ${number}</h5>
+            <p class="card-text">Taquilla: 1</p>
+          `
+            : `<div class="alert alert-warning text-center">No hay más turnos disponibles.</div>`;
 
-        $('#turnoActualizado').html(content);
-
-        $.ajax({
-            url: '/PublicScreen/GetUpdatedTurn',
-            method: 'GET',
-            success: function (data) {
-                $('#turnoActualizado').html(`Turno: ${data.type[0]} ${data.number}`);
-            },
-            error: function (err) {
-                console.error("Error al obtener el turno actualizado:", err);
-            }
+        $('#turnoActualizado').fadeOut(200, function () {
+            $(this).html(content).fadeIn(200);
         });
+    });
+
+
+
+    connection.on("UpdateAppointment", function (patientName, doctorName, office) {
+        console.log("Cita actualizada:", patientName, doctorName);
+
+        const appointmentContent = `Paciente: ${patientName} <br> Doctor: ${doctorName} <br> Consultorio: ${office}`;
+
+        $('#citaActualizada').html(appointmentContent);
     });
 </script>
 </body>
