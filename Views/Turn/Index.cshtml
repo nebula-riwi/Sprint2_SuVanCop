@@ -1,49 +1,92 @@
-@model IEnumerable<SuVanCop.Models.Turn>
-
 @{
-    ViewData["Title"] = "Panel de Turnos";
+    ViewData["Title"] = "Turnero Digital";
+    //Layout = "_Layout";  Opcional, puedes usar el layout normal o dejarlo sin layout si es una pantalla Kiosko.
 }
 
-<h1>Panel de Control de Turnos</h1>
-<p class="lead">Desde aquí se gestionan los turnos (llamar, atender, etc.) y se accede al turnero.</p>
+<div class="text-center">
+    <h1 class="display-4 text-primary">Sistema de Turnos</h1>
+    <p class="lead">Pulse el botón para obtener su turno.</p>
+</div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <a asp-action="Create" class="btn btn-primary btn-lg">
-            Ir al Turnero (Generar Turno)
-        </a>
+@* Muestra mensaje de error si la generación/impresión falló *@
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
     </div>
+}
 
-    <div class="col-md-6">
-        <form asp-action="ResetCounter" method="post" onsubmit="return confirm('¿Seguro que desea reiniciar el contador GENERAL (G)? Esta acción es irreversible.');">
-            <input type="hidden" name="type" value="G" />
-            <button type="submit" class="btn btn-danger btn-lg">
-                Reiniciar Contador (G)
+<div class="row mt-5 justify-content-center">
+    
+    <div class="col-md-4 mb-4">
+        <form asp-controller="Turn" asp-action="CreateTurn" method="post">
+            <input type="hidden" name="type" value="G" /> 
+            <button type="submit" class="btn btn-primary btn-lg w-100 turn-button">
+                Atención General (G)
+                <br><span class="turn-label">TOMAR TURNO</span>
             </button>
         </form>
     </div>
+
+    <div class="col-md-4 mb-4">
+        <form asp-controller="Turn" asp-action="CreateTurn" method="post">
+            <input type="hidden" name="type" value="R" />
+            <button type="submit" class="btn btn-info btn-lg w-100 turn-button">
+                Registros (R)
+                <br><span class="turn-label">TOMAR TURNO</span>
+            </button>
+        </form>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <form asp-controller="Turn" asp-action="CreateTurn" method="post">
+            <input type="hidden" name="type" value="C" />
+            <button type="submit" class="btn btn-success btn-lg w-100 turn-button">
+                PQR's (C)
+                <br><span class="turn-label">TOMAR TURNO</span>
+            </button>
+        </form>
+    </div>
+
 </div>
 
-<hr/>
-<h2>Turnos Pendientes</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Type)</th>
-            <th>@Html.DisplayNameFor(model => model.Number)</th>
-            <th>@Html.DisplayNameFor(model => model.Status)</th>
-            <th>@Html.DisplayNameFor(model => model.CreationDate)</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Type</td>
-                <td>@item.Number.ToString("D3")</td>
-                <td>@item.Status</td>
-                <td>@item.CreationDate</td>
-            </tr>
+<style>
+    .turn-button {
+        height: 200px; 
+        font-size: 2.5em; 
+        font-weight: bold;
+        transition: transform 0.2s;
+    }
+    .turn-label {
+        font-size: 0.4em;
+        font-weight: normal;
+        display: block;
+        margin-top: 5px;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@* Bloque de scripts para mostrar la notificación *@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Recuperar el código y el mensaje de éxito pasado por TempData
+        const successMessage = '@TempData["SuccessMessage"]';
+        const turnCode = '@TempData["TurnCode"]';
+
+        // Si existe un mensaje de éxito, mostramos la alerta
+        if (successMessage && successMessage !== '') {
+            Swal.fire({
+                title: '¡Turno Generado!',
+                html: `
+                    ${successMessage}<br><br>
+                    <strong>Su código es: <span style="font-size: 2.5em; color: #dc3545;">${turnCode}</span></strong>
+                    <br>El ticket ha sido enviado a la impresora.
+                `,
+                icon: 'success',
+                confirmButtonText: 'Entendido',
+                customClass: {
+                    container: 'my-swal-popup'
+                }
+            });
         }
-    </tbody>
-</table>
+    });
+</script>
