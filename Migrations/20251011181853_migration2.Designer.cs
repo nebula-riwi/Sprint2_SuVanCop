@@ -12,8 +12,8 @@ using SuVanCop.Data;
 namespace SuVanCop.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20251009194217_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251011181853_migration2")]
+    partial class migration2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,10 @@ namespace SuVanCop.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Speciality")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
