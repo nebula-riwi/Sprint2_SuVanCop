@@ -1,18 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using SuVanCop.Data;
+using SuVanCop.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configurar Kestrel para IPv4 y HTTPS
+
+
+// Servicios
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<PostgresDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<PostgresDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -20,12 +26,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
 
+// Rutas MVC y SignalR
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
+app.MapHub<TurnHub>("/turnHub");
 
 app.Run();

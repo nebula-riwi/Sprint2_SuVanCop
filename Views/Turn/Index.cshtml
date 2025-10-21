@@ -1,0 +1,217 @@
+@{
+ViewData["Title"] = "Turnero Digital";
+Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SuVanCop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary-color: #007bff; /* Vibrant Blue */
+            --general-color: #1abc9c; /* Seafoam Green */
+            --records-color: #3498db; /* Deep Sky Blue */
+            --pqr-color: #f39c12;    /* Sunset Orange */
+            --text-dark: #2c3e50;    /* Dark Slate Gray */
+            --text-light: #ecf0f1;   /* Light Gray */
+        }
+
+        body {
+            /* Background: A soft, vibrant background for energy */
+            background: linear-gradient(135deg, #e9ecef 0%, #d4e0e8 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Central Content Card */
+        .card-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            border-radius: 25px; /* Softer, modern rounding */
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); /* Deeper shadow */
+            padding: 50px;
+        }
+
+        /* Improved Heading Style */
+        .system-header {
+            color: var(--primary-color);
+            font-weight: 900; /* Ultra bold */
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .lead-text {
+            color: var(--text-dark);
+            font-weight: 300; /* Lighter weight for contrast */
+            font-size: 1.25rem;
+            margin-top: 15px;
+        }
+
+        /* Button/Card Styles - THE MAJOR IMPROVEMENT */
+        .turn-card-button {
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 15px;
+            color: var(--text-light);
+            /* Keep smooth transitions for static CSS hover effects */
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .turn-card-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1); /* Subtle dark overlay */
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+
+        .turn-card-button:hover {
+            transform: translateY(-8px) scale(1.02); /* Noticeable lift and slight scale on hover */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .turn-card-button:hover:before {
+            opacity: 1; /* Darken slightly on hover for visual depth */
+        }
+
+        /* Inner content for better alignment and visual hierarchy */
+        .card-content {
+            position: relative; /* Ensure content is above the overlay */
+            z-index: 10;
+        }
+
+        .card-content i {
+            font-size: 4rem; /* HUGE, impactful icons */
+            margin-bottom: 0.5rem;
+            display: block;
+            line-height: 1;
+        }
+
+        .card-content .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        /* Custom Color Schemes with Gradients */
+        .bg-general {
+            background: linear-gradient(135deg, var(--general-color), #2ecc71);
+        }
+        .bg-records {
+            background: linear-gradient(135deg, var(--records-color), #2980b9);
+        }
+        .bg-pqr {
+            background: linear-gradient(135deg, var(--pqr-color), #e67e22);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="card-container">
+        <div class="text-center mb-5">
+            <h1 class="display-2 system-header">Turnero Digital</h1>
+            <p class="lead lead-text">Pulse el botón del servicio que necesita para generar su turno.</p>
+        </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+        <div class="alert alert-danger rounded-3 shadow-sm text-center mx-auto mb-5 p-3" style="max-width: 650px; font-weight: 500; font-size: 1.1rem; border: 2px solid #dc3545;">
+            <i class="bi bi-x-octagon-fill me-2 fs-4"></i>
+            <strong>¡Error!</strong> @TempData["ErrorMessage"]
+        </div>
+        }
+
+        <div class="row justify-content-center g-4">
+            @* Atención General *@
+            <div class="col-lg-4 col-md-6">
+                <form asp-controller="Turn" asp-action="CreateTurn" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="type" value="G" />
+                    <button type="submit" class="turn-card-button bg-general w-100">
+                        <div class="card-content">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                            <span class="card-title">Atención General</span>
+                        </div>
+                    </button>
+                </form>
+            </div>
+
+            @* Registros *@
+            <div class="col-lg-4 col-md-6">
+                <form asp-controller="Turn" asp-action="CreateTurn" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="type" value="R" />
+                    <button type="submit" class="turn-card-button bg-records w-100">
+                        <div class="card-content">
+                            <i class="bi bi-journal-text"></i>
+                            <span class="card-title">Registros</span>
+                        </div>
+                    </button>
+                </form>
+            </div>
+
+            @* PQR's *@
+            <div class="col-lg-4 col-md-12">
+                <form asp-controller="Turn" asp-action="CreateTurn" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="type" value="C" />
+                    <button type="submit" class="turn-card-button bg-pqr w-100">
+                        <div class="card-content">
+                            <i class="bi bi-chat-heart"></i>
+                            <span class="card-title">PQR's</span>
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const successMessage = '@TempData["SuccessMessage"]';
+        const turnCode = '@TempData["TurnCode"]';
+
+        if (successMessage && successMessage !== '') {
+            Swal.fire({
+                title: '¡Turno Generado!',
+                html: successMessage + "<br><br>" +
+                    "<strong>Su código es: <span style='font-size:2.5em;color:#dc3545;'>" + turnCode + "</span></strong><br>" +
+                    "El ticket ha sido enviado a la impresora.",
+                icon: 'success',
+                confirmButtonText: 'Entendido'
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

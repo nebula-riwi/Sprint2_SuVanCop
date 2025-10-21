@@ -2,7 +2,71 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SuVanCop</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .welcome-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .welcome-logo {
+            width: 180px;
+            height: 180px;
+            margin-bottom: 30px;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            color: #495057;
+        }
+
+        .welcome-text a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .welcome-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <img src="https://i.ibb.co/Qv3zm29F/image-1759875201459-removebg-preview.png" alt="SuVanCop Logo" class="welcome-logo" />
+        <h1 class="welcome-title">Bienvenido a SuVanCop</h1>
+        <p class="welcome-text">
+            Tu sistema de turnos y gestión de citas en línea. <br/>
+        </p>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

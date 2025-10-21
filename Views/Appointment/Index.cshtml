@@ -1,0 +1,221 @@
+﻿@model IEnumerable<SuVanCop.Models.Appointment>
+
+@{
+    Layout = "_ManageLayout";
+}
+<!-- Botón para abrir el modal -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalNuevaCita">
+        <i class="bi bi-calendar-plus me-2"></i> Nueva Cita
+    </button>
+</div>
+
+<!-- Modal con formulario -->
+<div class="modal fade" id="modalNuevaCita" tabindex="-1" aria-labelledby="modalNuevaCitaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="modalNuevaCitaLabel">
+                    <i class="bi bi-calendar-plus me-2"></i> Registro de Cita
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 🔹 agregado onsubmit para validar el UserId y la disponibilidad -->
+                <form asp-action="Create" method="post" onsubmit="return validarFormularioCita(event)">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Fecha</label>
+                            <input type="date" name="Date" id="DateInput" class="form-control rounded-pill" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Hora</label>
+                            <select name="Hour" id="HourSelect" class="form-select rounded-pill" required>
+                                <option value="">Seleccione una hora</option>
+                                @for (int hour = 6; hour <= 20; hour++)
+                                {
+                                    <option value="@($"{hour:D2}:00")">@($"{hour:D2}:00")</option>
+                                    if (hour < 20)
+                                    {
+                                        <option value="@($"{hour:D2}:30")">@($"{hour:D2}:30")</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="Status" value="Pendiente">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Número de documento (NUIP)</label>
+                            <input type="number" id="NuipInput" class="form-control rounded-pill" placeholder="Ingrese número de documento" required>
+                            <input type="hidden" name="UserId" id="UserId" />
+                            <small id="userInfo" class="text-muted ms-2"></small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Doctor</label>
+                            <select name="DoctorId" id="DoctorSelect" class="form-select rounded-pill" required>
+                                <option value="">Seleccione un doctor</option>
+                                @foreach (var doctor in ViewBag.Doctors)
+                                {
+                                    <option value="@doctor.Id">@doctor.Names @doctor.LastNames</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button class="btn btn-success rounded-pill">
+                            <i class="bi bi-save me-2"></i> Guardar Información
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔹 agregado bloque para mostrar errores -->
+@if (TempData["error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Tabla de citas -->
+<div class="card shadow-sm border-0 rounded-4 mt-3">
+    <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-journal-medical me-2"></i> Lista de Citas</span>
+        <span class="badge bg-light text-dark px-3">
+            @Model.Count(a => a.Date.Date == DateTime.Today) citas hoy
+        </span>
+    </div>
+    <div class="card-body">
+        @if (TempData["message"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Usuario</th>
+                        <th>Doctor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var appointment in Model)
+                        {
+                            <tr>
+                                <td>@appointment.Date.ToString("dd/MM/yyyy")</td>
+                                <td>@appointment.Hour.ToString(@"hh\:mm")</td>
+                                <td>
+                                    <span class="badge bg-info text-dark px-2">
+                                        @(appointment.User != null ? $"{appointment.User.Names} {appointment.User.LastNames}" : "Sin usuario")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary text-white px-2">
+                                        @(appointment.Doctor != null ? $"{appointment.Doctor.Names} {appointment.Doctor.LastNames}" : "Sin usuario")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-controller="Appointment" asp-action="Details" asp-route-id="@appointment.Id"
+                                           class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                            <i class="bi bi-eye me-1"></i> Detalles
+                                        </a>
+                                        <a asp-controller="Appointment" asp-action="Edit" asp-route-id="@appointment.Id"
+                                           class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                            <i class="bi bi-pencil-square me-1"></i> Editar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-muted py-4">
+                                <i class="bi bi-calendar-x me-2"></i> No hay citas registradas.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("NuipInput").addEventListener("input", function () {
+        const nuip = this.value.trim();
+
+        if (nuip.length === 0) {
+            document.getElementById("UserId").value = "";
+            document.getElementById("userInfo").innerText = "";
+            return;
+        }
+
+        fetch(`/Appointment/GetUserByNuip?nuip=${encodeURIComponent(nuip)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.found) {
+                    document.getElementById("UserId").value = data.id;
+                    document.getElementById("userInfo").innerText = data.name;
+                } else {
+                    document.getElementById("UserId").value = "";
+                    document.getElementById("userInfo").innerText = "Usuario no encontrado";
+                }
+            })
+            .catch(error => {
+                console.error("Error al buscar usuario:", error);
+                document.getElementById("UserId").value = "";
+                document.getElementById("userInfo").innerText = "Error de conexión";
+            });
+    });
+
+    // 🔹 Validación antes de enviar el formulario
+    async function validarFormularioCita(event) {
+        event.preventDefault();
+
+        const userId = document.getElementById("UserId").value;
+        const doctorId = document.getElementById("DoctorSelect").value;
+        const date = document.getElementById("DateInput").value;
+        const hour = document.getElementById("HourSelect").value;
+
+        if (!userId) {
+            alert("Debe ingresar un NUIP válido antes de guardar.");
+            return false;
+        }
+
+        if (!doctorId || !date || !hour) {
+            alert("Debe completar todos los campos obligatorios.");
+            return false;
+        }
+
+        // 🔹 Validar disponibilidad del doctor
+        const response = await fetch(`/Appointment/ValidateAvailability?doctorId=${doctorId}&date=${date}&hour=${hour}`);
+        const data = await response.json();
+
+        if (!data.available) {
+            alert("El doctor ya tiene una cita en esa fecha y hora.");
+            return false;
+        }
+
+        event.target.submit();
+        return true;
+    }
+</script>
