@@ -21,7 +21,8 @@ namespace SuVanCop.Migrations
                     Names = table.Column<string>(type: "text", nullable: false),
                     LastNames = table.Column<string>(type: "text", nullable: false),
                     Nuip = table.Column<string>(type: "text", nullable: false),
-                    Speciality = table.Column<string>(type: "text", nullable: false)
+                    Speciality = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
